@@ -64,7 +64,6 @@
   -   **[spring-boot-starter-data-jpa](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa)**
   -   **[spring-boot-starter-cache](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache)**
   -   **[h2](https://mvnrepository.com/artifact/com.h2database/h2)**
-  -   **[jjwt](https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt)**
   -   **[spring-boot-devtools](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools)**
   -   **[spring-boot-starter-test](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test)**
   -   **[spring-boot-starter-validation](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation)**
