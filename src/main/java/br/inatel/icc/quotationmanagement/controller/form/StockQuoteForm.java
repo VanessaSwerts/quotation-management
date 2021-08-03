@@ -18,6 +18,7 @@ public class StockQuoteForm {
 	@NotNull
 	@NotEmpty
 	private String id;
+	
 	@NotNull
 	@NotEmpty
 	private Map<String, String> quotes;	

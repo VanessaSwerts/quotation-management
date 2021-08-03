@@ -22,6 +22,7 @@ import br.inatel.icc.quotationmanagement.configs.validation.FormErrorDto;
 import br.inatel.icc.quotationmanagement.controller.form.StockQuoteForm;
 import br.inatel.icc.quotationmanagement.dto.StockDto;
 import br.inatel.icc.quotationmanagement.dto.StockQuoteDto;
+import br.inatel.icc.quotationmanagement.model.Quote;
 import br.inatel.icc.quotationmanagement.model.StockOperation;
 import br.inatel.icc.quotationmanagement.repository.StockOperationRepository;
 import br.inatel.icc.quotationmanagement.service.StockService;
@@ -32,7 +33,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor(onConstructor = @__({ @Autowired }))
 public class QuoteController {
 
-//	private QuoteRepository quoteRepository;
 	private StockOperationRepository stockOperationRepository;
 	private StockService stockService;
 
@@ -48,14 +48,17 @@ public class QuoteController {
 		}
 
 		StockOperation newOperation = form.convertToStockOperation();
+		List<Quote> quotes = newOperation.getQuotes();
 
-//		for (Quote quote : quotes) {
-//			Optional<Quote> alreadyExists = quoteRepository.findByStockIdAndDate(quote.getStock().getStockId(), quote.getDate());
-//			
-//			if(alreadyExists.isPresent()) {
-//				return ResponseEntity.badRequest().build();
-//			}
-//		}
+		for (Quote quote : quotes) {
+			
+			Optional<StockOperation> alreadyExists = stockOperationRepository.findByStockIdAndQuotesDate(newOperation.getStockId(), quote.getDate());
+
+			if (alreadyExists.isPresent()) {
+				return ResponseEntity.badRequest().build();
+			}
+		}
+
 		stockOperationRepository.save(newOperation);
 
 		URI uri = uriBuilder.path("/quotes/{id}").buildAndExpand(form.getId()).toUri();
@@ -64,17 +67,17 @@ public class QuoteController {
 
 	@GetMapping("/{id}")
 	@Transactional
-	public ResponseEntity<StockQuoteDto> listByStockId(@PathVariable("id") String stockId) {
+	public ResponseEntity<List<StockQuoteDto>> listByStockId(@PathVariable("id") String stockId) {
 		StockDto stock = stockService.findById(stockId);
 
 		if (stock == null)
 			return ResponseEntity.notFound().build();
 
-		Optional<StockOperation> operation = stockOperationRepository.findByStockId(stockId);
-		if (operation.isEmpty())
+		List<StockOperation> listStockOperation = stockOperationRepository.findByStockId(stockId);
+		if (listStockOperation.isEmpty())
 			return ResponseEntity.notFound().build();
 
-		return ResponseEntity.ok(new StockQuoteDto(operation.get()));
+		return ResponseEntity.ok(StockQuoteDto.convertToStockQuoteDtoList(listStockOperation));
 	}
 
 	@GetMapping()
