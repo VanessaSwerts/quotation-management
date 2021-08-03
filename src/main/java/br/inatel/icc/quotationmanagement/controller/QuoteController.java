@@ -27,10 +27,12 @@ import br.inatel.icc.quotationmanagement.model.StockOperation;
 import br.inatel.icc.quotationmanagement.repository.StockOperationRepository;
 import br.inatel.icc.quotationmanagement.service.StockService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/quote")
 @AllArgsConstructor(onConstructor = @__({ @Autowired }))
+@Slf4j
 public class QuoteController {
 
 	private StockOperationRepository stockOperationRepository;
@@ -43,48 +45,62 @@ public class QuoteController {
 		StockDto stock = stockService.findById(form.getId());
 
 		if (stock == null) {
+			log.error("Stock with id " + form.getId() + "not found!");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new FormErrorDto("id", "Não foi possível encontrar um Stock com o id: " + form.getId()));
+					.body(new FormErrorDto("id", "Could not find a stock with id : " + form.getId()));
 		}
 
 		StockOperation newOperation = form.convertToStockOperation();
 		List<Quote> quotes = newOperation.getQuotes();
 
 		for (Quote quote : quotes) {
-			
-			Optional<StockOperation> alreadyExists = stockOperationRepository.findByStockIdAndQuotesDate(newOperation.getStockId(), quote.getDate());
+			Optional<StockOperation> alreadyExists = stockOperationRepository
+					.findByStockIdAndQuotesDate(newOperation.getStockId(), quote.getDate());
 
 			if (alreadyExists.isPresent()) {
-				return ResponseEntity.badRequest().build();
+				log.error("Already exist a price to date " + quote.getDate() + " in stock with id : " + form.getId());
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new FormErrorDto("id",
+						"Already exist a price to date " + quote.getDate() + " in stock with id : " + form.getId()));
 			}
 		}
 
 		stockOperationRepository.save(newOperation);
 
+		log.info("Saving quotes to the stock with id: " + form.getId());
 		URI uri = uriBuilder.path("/quotes/{id}").buildAndExpand(form.getId()).toUri();
 		return ResponseEntity.created(uri).body(new StockQuoteDto(newOperation));
 	}
 
 	@GetMapping("/{id}")
 	@Transactional
-	public ResponseEntity<List<StockQuoteDto>> listByStockId(@PathVariable("id") String stockId) {
+	public ResponseEntity<?> listByStockId(@PathVariable("id") String stockId) {
 		StockDto stock = stockService.findById(stockId);
 
-		if (stock == null)
-			return ResponseEntity.notFound().build();
+		if (stock == null) {
+			log.error("Stock with id " + stockId + "not found!");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new FormErrorDto("id", "Could not find a stock with id : " + stockId));
+		}
 
 		List<StockOperation> listStockOperation = stockOperationRepository.findByStockId(stockId);
 		if (listStockOperation.isEmpty())
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new FormErrorDto("id", "No quotes operations to the stock with id : " + stockId));
 
+		log.info("Listing all quotes operations to the stock with id: " + stockId);
 		return ResponseEntity.ok(StockQuoteDto.convertToStockQuoteDtoList(listStockOperation));
 	}
 
 	@GetMapping()
 	@Transactional
-	public ResponseEntity<List<StockQuoteDto>> listAll() {
+	public ResponseEntity<?> listAll() {
 		List<StockOperation> listStockOperation = stockOperationRepository.findAll();
 
+		if (listStockOperation.isEmpty())
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new FormErrorDto("id", "Stock quotes operations not found!"));
+
+		log.info("Listing all stock quotes operations");
 		return ResponseEntity.ok(StockQuoteDto.convertToStockQuoteDtoList(listStockOperation));
 	}
 
