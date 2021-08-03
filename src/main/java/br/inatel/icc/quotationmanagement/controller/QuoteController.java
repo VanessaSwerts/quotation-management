@@ -47,7 +47,7 @@ public class QuoteController {
 		if (stock == null) {
 			log.error("Stock with id " + form.getId() + "not found!");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new FormErrorDto("id", "Could not find a stock with id : " + form.getId()));
+					.body(new FormErrorDto("id", "Could not find a stock with id: " + form.getId()));
 		}
 
 		StockOperation newOperation = form.convertToStockOperation();
@@ -59,7 +59,7 @@ public class QuoteController {
 
 			if (alreadyExists.isPresent()) {
 				log.error("Already exist a price to date " + quote.getDate() + " in stock with id : " + form.getId());
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new FormErrorDto("id",
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new FormErrorDto("quotes",
 						"Already exist a price to date " + quote.getDate() + " in stock with id : " + form.getId()));
 			}
 		}
@@ -79,7 +79,7 @@ public class QuoteController {
 		if (stock == null) {
 			log.error("Stock with id " + stockId + "not found!");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new FormErrorDto("id", "Could not find a stock with id : " + stockId));
+					.body(new FormErrorDto("id", "Could not find a stock with id: " + stockId));
 		}
 
 		List<StockOperation> listStockOperation = stockOperationRepository.findByStockId(stockId);

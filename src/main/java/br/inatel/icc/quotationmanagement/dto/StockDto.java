@@ -4,6 +4,10 @@ public class StockDto {
 
 	String id;
 	String description;
+	
+	public StockDto() {
+		
+	}
 
 	public StockDto(String id, String description) {
 		this.id = id;
