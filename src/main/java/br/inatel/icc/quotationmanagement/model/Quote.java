@@ -2,12 +2,12 @@ package br.inatel.icc.quotationmanagement.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.NoArgsConstructor;
@@ -19,24 +19,22 @@ public class Quote {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+	private Long id;
 
-	private String stockId;
 	private LocalDate date;
 	private BigDecimal price;
 
-	public Quote(String stockId, LocalDate date, BigDecimal price) {
-		this.stockId = stockId;
+	@ManyToOne
+	private StockOperation stock;
+
+	public Quote(LocalDate date, BigDecimal price, StockOperation stock) {
 		this.date = date;
 		this.price = price;
+		this.stock = stock;
 	}
 
-	public UUID getId() {
+	public Long getId() {
 		return id;
-	}
-
-	public String getStockId() {
-		return stockId;
 	}
 
 	public LocalDate getDate() {
@@ -45,6 +43,10 @@ public class Quote {
 
 	public BigDecimal getPrice() {
 		return price;
+	}
+
+	public StockOperation getStock() {
+		return stock;
 	}
 
 }

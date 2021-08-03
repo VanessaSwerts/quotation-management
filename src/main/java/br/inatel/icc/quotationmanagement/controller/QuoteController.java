@@ -2,12 +2,13 @@ package br.inatel.icc.quotationmanagement.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import br.inatel.icc.quotationmanagement.configs.validation.FormErrorDto;
 import br.inatel.icc.quotationmanagement.controller.form.StockQuoteForm;
 import br.inatel.icc.quotationmanagement.dto.StockDto;
 import br.inatel.icc.quotationmanagement.dto.StockQuoteDto;
-import br.inatel.icc.quotationmanagement.model.Quote;
-import br.inatel.icc.quotationmanagement.repository.QuoteRepository;
+import br.inatel.icc.quotationmanagement.model.StockOperation;
+import br.inatel.icc.quotationmanagement.repository.StockOperationRepository;
 import br.inatel.icc.quotationmanagement.service.StockService;
 import lombok.AllArgsConstructor;
 
@@ -30,25 +32,34 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor(onConstructor = @__({ @Autowired }))
 public class QuoteController {
 
-	private QuoteRepository quoteRepository;
+//	private QuoteRepository quoteRepository;
+	private StockOperationRepository stockOperationRepository;
 	private StockService stockService;
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<StockQuoteDto> create(@RequestBody @Valid StockQuoteForm form,
-			UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<?> create(@RequestBody @Valid StockQuoteForm form, UriComponentsBuilder uriBuilder) {
 
 		StockDto stock = stockService.findById(form.getId());
 
 		if (stock == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new FormErrorDto("id", "Não foi possível encontrar um Stock com o id: " + form.getId()));
 		}
 
-		List<Quote> quotes = form.convertQuotesMapToList();
-		quoteRepository.saveAll(quotes);
+		StockOperation newOperation = form.convertToStockOperation();
+
+//		for (Quote quote : quotes) {
+//			Optional<Quote> alreadyExists = quoteRepository.findByStockIdAndDate(quote.getStock().getStockId(), quote.getDate());
+//			
+//			if(alreadyExists.isPresent()) {
+//				return ResponseEntity.badRequest().build();
+//			}
+//		}
+		stockOperationRepository.save(newOperation);
 
 		URI uri = uriBuilder.path("/quotes/{id}").buildAndExpand(form.getId()).toUri();
-		return ResponseEntity.created(uri).body(new StockQuoteDto(form.getId(), quotes));
+		return ResponseEntity.created(uri).body(new StockQuoteDto(newOperation));
 	}
 
 	@GetMapping("/{id}")
@@ -59,23 +70,19 @@ public class QuoteController {
 		if (stock == null)
 			return ResponseEntity.notFound().build();
 
-		List<Quote> quotes = quoteRepository.findByStockId(stockId);
+		Optional<StockOperation> operation = stockOperationRepository.findByStockId(stockId);
+		if (operation.isEmpty())
+			return ResponseEntity.notFound().build();
 
-		return ResponseEntity.ok(new StockQuoteDto(stockId, quotes));
+		return ResponseEntity.ok(new StockQuoteDto(operation.get()));
 	}
 
 	@GetMapping()
 	@Transactional
 	public ResponseEntity<List<StockQuoteDto>> listAll() {
-		List<StockDto> stocksList = stockService.findAll();
+		List<StockOperation> listStockOperation = stockOperationRepository.findAll();
 
-		List<StockQuoteDto> stockQuotesList = stocksList.stream().map(stock -> {
-			List<Quote> quotesList = quoteRepository.findByStockId(stock.getId());
-			return new StockQuoteDto(stock.getId(), quotesList);
-
-		}).collect(Collectors.toList());
-
-		return ResponseEntity.ok(stockQuotesList);
+		return ResponseEntity.ok(StockQuoteDto.convertToStockQuoteDtoList(listStockOperation));
 	}
 
 }

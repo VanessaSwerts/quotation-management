@@ -3,8 +3,10 @@ package br.inatel.icc.quotationmanagement.dto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import br.inatel.icc.quotationmanagement.model.Quote;
+import br.inatel.icc.quotationmanagement.model.StockOperation;
 
 public class StockQuoteDto {
 
@@ -12,9 +14,10 @@ public class StockQuoteDto {
 	private String stockId;
 	private Map<String, String> quotes = new HashMap<String, String>();
 
-	public StockQuoteDto(String stockId, List<Quote> quotes) {
-		this.stockId = stockId;
-		this.quotes = convertQuotesListToMap(quotes);
+	public StockQuoteDto(StockOperation stockOperation) {
+		this.id = stockOperation.getId().toString();
+		this.stockId = stockOperation.getStockId();
+		this.quotes = convertQuotesListToMap(stockOperation.getQuotes());
 	}
 
 	public String getId() {
@@ -33,7 +36,6 @@ public class StockQuoteDto {
 		Map<String, String> quotesMap = new HashMap<>();
 
 		quotesList.forEach(quote -> {
-			this.id = quote.getId().toString();
 			String date = quote.getDate().toString();
 			String price = quote.getPrice().toBigInteger().toString();
 
@@ -41,6 +43,10 @@ public class StockQuoteDto {
 		});
 
 		return quotesMap;
+	}
+
+	public static List<StockQuoteDto> convertToStockQuoteDtoList(List<StockOperation> listStockOperation) {
+		return listStockOperation.stream().map(StockQuoteDto::new).collect(Collectors.toList());
 	}
 
 }
