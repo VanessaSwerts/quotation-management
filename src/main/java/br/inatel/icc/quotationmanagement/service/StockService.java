@@ -53,8 +53,6 @@ public class StockService {
 		body.put("port", 8081);
 
 		HttpEntity<String> request = new HttpEntity<String>(body.toString(), header);
-		
-		log.info("Registering header and body!");
 
 		restTemplate.postForObject(BASIC_NOTIFICATION_URL, request, String.class);
 	}
