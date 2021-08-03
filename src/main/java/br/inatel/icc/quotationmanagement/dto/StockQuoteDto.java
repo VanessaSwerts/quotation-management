@@ -15,7 +15,7 @@ public class StockQuoteDto {
 	private Map<String, String> quotes = new HashMap<String, String>();
 
 	public StockQuoteDto(StockOperation stockOperation) {
-		this.id = stockOperation.getId().toString();
+		this.id = stockOperation.getUUID().toString();
 		this.stockId = stockOperation.getStockId();
 		this.quotes = convertQuotesListToMap(stockOperation.getQuotes());
 	}

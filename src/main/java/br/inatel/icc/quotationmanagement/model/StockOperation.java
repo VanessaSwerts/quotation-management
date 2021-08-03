@@ -22,19 +22,26 @@ public class StockOperation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private UUID id;
+	private Long id;
+	
+	private UUID uuid;
 
 	private String stockId;
 
-	@OneToMany(mappedBy = "stock", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany(mappedBy = "stockOperation", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Quote> quotes = new ArrayList<>();
 
 	public StockOperation(String stockId) {
 		this.stockId = stockId;
+		this.uuid = UUID.randomUUID();
 	}
 
-	public UUID getId() {
+	public UUID getUUID() {
+		return uuid;
+	}
+	
+	public Long getId() {
 		return id;
 	}
 

@@ -25,12 +25,12 @@ public class Quote {
 	private BigDecimal price;
 
 	@ManyToOne
-	private StockOperation stock;
+	private StockOperation stockOperation;
 
-	public Quote(LocalDate date, BigDecimal price, StockOperation stock) {
+	public Quote(LocalDate date, BigDecimal price, StockOperation stockOperation) {
 		this.date = date;
 		this.price = price;
-		this.stock = stock;
+		this.stockOperation = stockOperation;
 	}
 
 	public Long getId() {
@@ -45,8 +45,8 @@ public class Quote {
 		return price;
 	}
 
-	public StockOperation getStock() {
-		return stock;
+	public StockOperation getStockOperation() {
+		return stockOperation;
 	}
 
 }
