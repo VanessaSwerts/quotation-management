@@ -1,5 +1,6 @@
 <p align="center">
- 
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/vanessaswerts/quotation-management/quotationTests">
+	
   <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/vanessaswerts/quotation-management">
 
   <img alt="Repository size" src="https://img.shields.io/github/repo-size/vanessaswerts/quotation-management">
