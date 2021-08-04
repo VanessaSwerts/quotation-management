@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,19 +20,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StockService {
 
-	private static final String BASIC_STOCK_URL = "http://localhost:8080/stock";
-	private static final String BASIC_NOTIFICATION_URL = "http://localhost:8080/notification";
 	private RestTemplate restTemplate;
 
+	private String basicStockURL;
+	private String basicNotificationURL;
+
 	@Autowired
-	public StockService() {
+	public StockService(@Value("${stock-manager.url}") String stockManagerURL) {
 		this.restTemplate = new RestTemplate();
+
+		this.basicStockURL = stockManagerURL + "/stock";
+		this.basicNotificationURL = stockManagerURL + "/notification";
+		System.out.println("URL ---> " + basicStockURL);
 	}
 
 	@Cacheable(value = "allStocks")
 	public List<StockDto> findAll() {
 		log.info("Getting all stocks from external API!");
-		StockDto[] stocks = restTemplate.getForObject(BASIC_STOCK_URL, StockDto[].class);
+		StockDto[] stocks = restTemplate.getForObject(basicStockURL, StockDto[].class);
 
 		return Arrays.asList(stocks);
 	}
@@ -39,7 +45,7 @@ public class StockService {
 	@Cacheable(value = "stockById")
 	public StockDto findById(String id) {
 		log.info("Getting the stock with id " + id + " from external API!");
-		return restTemplate.getForObject(BASIC_STOCK_URL + "/" + id, StockDto.class);
+		return restTemplate.getForObject(basicStockURL + "/" + id, StockDto.class);
 	}
 
 	public void registerNotification() {
@@ -54,7 +60,7 @@ public class StockService {
 
 		HttpEntity<String> request = new HttpEntity<String>(body.toString(), header);
 
-		restTemplate.postForObject(BASIC_NOTIFICATION_URL, request, String.class);
+		restTemplate.postForObject(basicNotificationURL, request, String.class);
 	}
 
 }
