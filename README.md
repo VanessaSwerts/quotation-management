@@ -11,7 +11,7 @@
 </p>
 
 <h4 align="center"> 
-	 Quotation Management API - desenvolvendo 
+	✅ Quotation Management API - Done ✅
 </h4>
 
 ---
@@ -62,12 +62,19 @@
 
 - **Dependências**:
   -   **[spring-boot-starter-web](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web)**
-  -   **[spring-boot-starter-data-jpa](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa)**
-  -   **[spring-boot-starter-cache](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache)**
-  -   **[h2](https://mvnrepository.com/artifact/com.h2database/h2)**
   -   **[spring-boot-devtools](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools)**
   -   **[spring-boot-starter-test](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test)**
+  -   **[spring-boot-starter-data-jpa](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa)**
   -   **[spring-boot-starter-validation](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation)**
+  -   **[spring-boot-starter-cache](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache)**
+  -   **[h2](https://mvnrepository.com/artifact/com.h2database/h2)**
+  -   **[mysql-connector-java](https://mvnrepository.com/artifact/mysql/mysql-connector-java)**
+  -   **[lombok](https://mvnrepository.com/artifact/org.projectlombok/lombok)**
+  -   **[json](https://mvnrepository.com/artifact/org.json/json)**
+  -   **[junit](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api)**
+  -   **[cucumber-java](https://mvnrepository.com/artifact/io.cucumber/cucumber-java)**
+  -   **[cucumber-junit](https://mvnrepository.com/artifact/io.cucumber/cucumber-junit)**
+  -   **[cucumber-spring](https://mvnrepository.com/artifact/io.cucumber/cucumber-spring)**
 
 ---
 
