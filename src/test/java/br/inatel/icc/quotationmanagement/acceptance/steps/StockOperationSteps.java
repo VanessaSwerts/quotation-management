@@ -27,6 +27,7 @@ public class StockOperationSteps extends CucumberSpringConfiguration {
 
 	private StockDto stock;
 	private List<StockDto> stocks;
+	private String getStockId;
 
 	private ResultActions response;
 
@@ -57,10 +58,31 @@ public class StockOperationSteps extends CucumberSpringConfiguration {
 	}
 
 	@Then("the quote is created and the client receive the response status and JSON with {string} and quotes")
-	public void the_quote_is_created_and_the_client_receive_the_response_status_and_json_with_and_quotes(String stockId) throws Exception {
+	public void the_quote_is_created_and_the_client_receive_the_response_status_and_json_with_and_quotes(String stockId)
+			throws Exception {
 		response.andExpect(MockMvcResultMatchers.status().is(201))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.stockId").value(stockId))
-		.andExpect(MockMvcResultMatchers.content().string(containsString("quotes")));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.stockId").value(stockId))
+				.andExpect(MockMvcResultMatchers.content().string(containsString("quotes")));
+	}
+
+	@Given("a stock with id {string}")
+	public void a_stock_with_id(String stockId) {
+		this.getStockId = stockId;
+		Mockito.when(stockService.findById(stockId)).thenReturn(null);
+	}
+
+	@When("client request the api passing an stockId that dont exists")
+	public void client_request_the_api_passing_an_stock_id_that_exists() throws Exception {
+		response = mockMvc
+				.perform(MockMvcRequestBuilders.get("/quote/" + getStockId).contentType(MediaType.APPLICATION_JSON));
+
+	}
+
+	@Then("the client receive the response status {int} and an error {string}")
+	public void the_client_receive_the_response_status_and_an_error(Integer status, String error) throws Exception {
+		response.andExpect(MockMvcResultMatchers.status().is(status))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.field").value("id"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.error").value(error));
 	}
 
 }
