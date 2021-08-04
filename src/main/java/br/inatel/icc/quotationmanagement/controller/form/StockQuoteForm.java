@@ -18,10 +18,10 @@ public class StockQuoteForm {
 	@NotNull
 	@NotEmpty
 	private String id;
-	
+
 	@NotNull
 	@NotEmpty
-	private Map<String, String> quotes;	
+	private Map<String, String> quotes;
 
 	public String getId() {
 		return id;
@@ -32,7 +32,7 @@ public class StockQuoteForm {
 	}
 
 	public List<Quote> convertQuotesMapToList(StockOperation stockOperation) {
-		List<Quote> quotesList = new ArrayList<>();		
+		List<Quote> quotesList = new ArrayList<>();
 
 		for (Map.Entry<String, String> quote : this.quotes.entrySet()) {
 
@@ -41,16 +41,34 @@ public class StockQuoteForm {
 
 			quotesList.add(new Quote(date, price, stockOperation));
 		}
-		
+
 		return quotesList;
 	}
-	
+
 	public StockOperation convertToStockOperation() {
 		StockOperation newStockOperation = new StockOperation(id);
-		List<Quote> newQuotes = convertQuotesMapToList(newStockOperation);		
+		List<Quote> newQuotes = convertQuotesMapToList(newStockOperation);
 		newStockOperation.setQuotes(newQuotes);
-		
-		return newStockOperation;		
+
+		return newStockOperation;
+	}
+
+	public boolean isQuotesValid() {
+
+		for (Map.Entry<String, String> quote : this.quotes.entrySet()) {
+			String date = quote.getKey();
+			String price = quote.getValue();
+
+			if (!date.matches("^((19|2[0-9])[0-9]{2})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
+				return false;
+			}
+
+			if (!price.matches("^[0-9]*([\\\\.,]{1}[0-9]{0,2}){0,1}$")) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

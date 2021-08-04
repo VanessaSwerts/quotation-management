@@ -50,6 +50,12 @@ public class QuoteController {
 					.body(new FormErrorDto("id", "Could not find a stock with id: " + form.getId()));
 		}
 
+		if(!form.isQuotesValid()) {
+			log.error("Date or Price is not valid!");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new FormErrorDto("quotes", "Date or Price is not valid!"));
+		}
+		
 		StockOperation newOperation = form.convertToStockOperation();
 		List<Quote> quotes = newOperation.getQuotes();
 
