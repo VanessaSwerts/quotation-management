@@ -63,7 +63,7 @@ public class StockQuoteForm {
 				return false;
 			}
 
-			if (!price.matches("^[0-9]*([\\\\.,]{1}[0-9]{0,2}){0,1}$")) {
+			if (price.isEmpty() || !price.matches("^[0-9]*([\\\\.,]{1}[0-9]{0,2}){0,1}$")) {
 				return false;
 			}
 		}
