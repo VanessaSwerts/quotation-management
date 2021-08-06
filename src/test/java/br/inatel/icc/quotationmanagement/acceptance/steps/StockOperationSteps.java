@@ -57,14 +57,27 @@ public class StockOperationSteps extends CucumberSpringConfiguration {
 				MockMvcRequestBuilders.post("/quote").content(body.toString()).contentType(MediaType.APPLICATION_JSON));
 	}
 
-	@Then("the quote is created and the client receive the response status and JSON with {string} and quotes")
-	public void the_quote_is_created_and_the_client_receive_the_response_status_and_json_with_and_quotes(String stockId)
-			throws Exception {
-		response.andExpect(MockMvcResultMatchers.status().is(201))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.stockId").value(stockId))
-				.andExpect(MockMvcResultMatchers.content().string(containsString("quotes")));
+	@Then("the quote is created and the client receive the response {int}")
+	public void the_quote_is_created_and_the_client_receive_the_response(Integer status) throws Exception {
+		response.andExpect(MockMvcResultMatchers.status().is(status));
 	}
 
+	@Then("and JSON with {string} and quotes")
+	public void and_json_with_and_quotes(String stockId) throws Exception {
+		response.andExpect(MockMvcResultMatchers.jsonPath("$.stockId").value(stockId))
+				.andExpect(MockMvcResultMatchers.content().string(containsString("quotes")));
+	}
+	
+	@Then("the quote is not created and the client receive the response {int}")
+	public void the_quote_is_not_created_and_the_client_receive_the_response(Integer status) throws Exception {
+		response.andExpect(MockMvcResultMatchers.status().is(status));
+	}
+	@Then("and JSON with the field {string} and a error {string}")
+	public void and_json_with_the_field_and_a_error(String field, String message) throws Exception {
+		response.andExpect(MockMvcResultMatchers.jsonPath("$.field").value(field))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.error").value(message));
+	}
+	
 	@Given("a stock with id {string}")
 	public void a_stock_with_id(String stockId) {
 		this.getStockId = stockId;

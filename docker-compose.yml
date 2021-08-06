@@ -20,7 +20,7 @@ services:
     networks:
       - quotation-management-network
     depends_on: 
-      - "mysql"
+      - mysql
    
   quotation-management:
     build:
@@ -38,7 +38,7 @@ services:
     networks:
       - quotation-management-network
     depends_on: 
-      - "stock-manager"
+      - stock-manager  
       
 networks:
   quotation-management-network:
